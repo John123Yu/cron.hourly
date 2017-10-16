@@ -3,31 +3,35 @@ import os
 import time
 from datetime import datetime
 
-datetime_chars = {str(x) for x in range(0,10)}
-additional_datetime_chars = ['-', ' ', ':']
-for char in additional_datetime_chars:
-    datetime_chars.add(char)
+file_name = '/var/log/harvester_run.log'
+current_time = datetime.now()
 
-harvester_run_log = open('/var/log/harvester_run.log', 'r').readlines()
+harvester_run_log = open(file_name, 'r').readlines()
 harvester_run_log_tail = harvester_run_log[-30:-1]
 harvester_run_log_last_line = harvester_run_log[-2:-1][0]
-#current_time = time.time()
-#current_time = datetime.datetime.fromtimestamp(current_time).strftime('%Y-%m-%d %H:%M:%S')
-current_time = datetime.now()
+
 for line in harvester_run_log_tail:
     print line
-#print harvester_run_log_tail
 print harvester_run_log_last_line
 
-last_timestamp = ""
-for char in harvester_run_log_last_line:
-    if char in datetime_chars:
-        last_timestamp += char
-    else:
-        break
-
-print datetime_chars
-print last_timestamp
+print "CURRENT TIME"
 print current_time
-time_difference = current_time - datetime.strptime(last_timestamp, '%Y-%m-%d %H:%M:%S')
-print time_difference
+
+try:
+    mtime = os.path.getmtime(file_name)
+except OSError:
+    mtime = 0
+last_modified = datetime.fromtimestamp(mtime)
+
+print "file last modified"
+print last_modified
+
+print "Time difference"
+time_difference_hours = (current_time - last_modified).total_seconds() / 3600
+print time_difference_hours
+
+if time_difference_hours > .02:
+    print "MORE"
+else:
+    print "LESS"
+
