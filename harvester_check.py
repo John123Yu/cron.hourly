@@ -10,10 +10,11 @@ file_name = '/var/log/harvester_run.log'
 current_time = datetime.now()
 recipient_emails = ['root@localhost']
 mail_from = 'no-reply@data.gov'
-harvester_errors = {'sqlalchemy.exc.OperationalError', ''}
+harvester_errors = {'sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server'}
+message_body = None
 
 harvester_run_log = open(file_name, 'r').readlines()
-harvester_run_log_tail = harvester_run_log[-30:-1]
+harvester_run_log_tail = harvester_run_log[-15:-1]
 #harvester_run_log_last_line = harvester_run_log[-2:-1][0]
 
 def _send_mail(mail_from='', recipient_emails=[''],
@@ -36,9 +37,9 @@ def _send_mail(mail_from='', recipient_emails=[''],
         smtp_connection.quit()
 
 for line in harvester_run_log_tail:
-    print line
     if any(error in line for error in harvester_errors):
         message_body = line
+        print line
 
 #print harvester_run_log_last_line
 try:
