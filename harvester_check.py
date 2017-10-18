@@ -10,7 +10,7 @@ file_name = '/var/log/harvester_run.log'
 current_time = datetime.now()
 recipient_emails = ['root@localhost']
 mail_from = 'no-reply@data.gov'
-harvester_errors = {'sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server'}
+harvester_errors = {'sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError'}
 message_body = None
 
 harvester_run_log = open(file_name, 'r').readlines()
