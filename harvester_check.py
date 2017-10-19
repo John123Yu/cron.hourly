@@ -3,8 +3,6 @@ import time
 import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
-from email.header import Header
-from email import Utils
 
 file_name = '/var/log/harvester_run.log'
 current_time = datetime.now()
@@ -41,14 +39,13 @@ for line in harvester_run_log_tail:
         message_body = line
         print line
 
-#print harvester_run_log_last_line
 try:
     mtime = os.path.getmtime(file_name)
 except OSError:
     mtime = 0
 last_modified = datetime.fromtimestamp(mtime)
 time_difference_hours = (current_time - last_modified).total_seconds() / 3600
-print "Time difference: " + str(time_difference_hours)
+#print "Time difference: " + str(time_difference_hours)
 
 if time_difference_hours > 6:
     message_body = 'Harvest log has not been updated in 6 hours.'
