@@ -7,7 +7,7 @@ from subprocess import call
 
 file_names = ('/var/log/gather-consumer.log', '/var/log/fetch-consumer.log')
 mail_from = 'no-reply@data.gov'
-recipient_emails = ['root@localhost', 'data.gov.dev@reisystems.com']
+recipient_emails = ['root@localhost', 'data.gov.support@reisystems.com']
 harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError', 'Gather stage failed', 'Fetch stage failed'])
 #harvester_successes = set(['objects to the fetch queue',])
 #Gather queue consumer registered
