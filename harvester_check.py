@@ -5,11 +5,14 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from subprocess import call
 
-current_time = datetime.now()
 file_names = ('/var/log/gather-consumer.log', '/var/log/fetch-consumer.log')
 mail_from = 'no-reply@data.gov'
-recipient_emails = ['root@localhost']
+recipient_emails = ['root@localhost', 'data.gov.dev@reisystems.com']
 harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError', 'Gather stage failed', 'Fetch stage failed'])
+#harvester_successes = set(['objects to the fetch queue',])
+#Gather queue consumer registered
+#Fetch queue consumer registered
+
 message_body = ""
 all_logs = list()
 
@@ -18,7 +21,7 @@ for file_name in file_names:
     log_tail = log[-15:]
     all_logs.append(log_tail)
 
-gather_log, fetch_log = all_logs
+#gather_log, fetch_log = all_logs
 
 def _send_mail(mail_from='', recipient_emails=[''],
         msg=MIMEText(''.encode('utf-8'), 'plain', 'utf-8')):
@@ -48,20 +51,17 @@ for i,file_name in enumerate(file_names):
         mtime = os.path.getmtime(file_name)
     except OSError:
         mtime = 0
-
+    current_time = datetime.now()
     last_modified = datetime.fromtimestamp(mtime)
     time_difference_hours = (current_time - last_modified).total_seconds() / 3600
-
-    if time_difference_hours > 12:
-        message_body += "{0} has not been updated in 12 hours. Last time it was updated: {1} \n".format(file_name, str(last_modified))
+    if time_difference_hours > 0:
+        message_body += "{0} has not been updated in 12 hours. Last time it was updated: {1}. Will perform a manual supervisor restart. \n".format(file_name, str(last_modified))
         if i == 0:
             return_code = call("supervisorctl restart harvest-gather", shell=True) 
-        else:
+        elif i == 1:
             return_code = call("supervisorctl restart harvest-fetch:*", shell=True)
-        print return_code
 
 if message_body:
     msg = MIMEText(message_body)
-    msg['Subject'] = 'Harvest log error'
-    #msg = MIMEText(message_body.encode('utf-8'), 'plain', 'utf-8')
+    msg['Subject'] = 'Harvesting log errors'
     _send_mail(mail_from, recipient_emails, msg)
