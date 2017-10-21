@@ -54,7 +54,7 @@ for i,file_name in enumerate(file_names):
     current_time = datetime.now()
     last_modified = datetime.fromtimestamp(mtime)
     time_difference_hours = (current_time - last_modified).total_seconds() / 3600
-    if time_difference_hours > 0:
+    if time_difference_hours > 12:
         message_body += "{0} has not been updated in 12 hours. Last time it was updated: {1}. Will perform a manual supervisor restart. \n".format(file_name, str(last_modified))
         if i == 0:
             return_code = call("supervisorctl restart harvest-gather", shell=True) 
