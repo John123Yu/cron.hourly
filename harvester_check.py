@@ -12,7 +12,6 @@ mail_from = 'no-reply@data.gov'
 recipient_emails = ['data.gov.support@reisystems.com', 'root@localhost']
 harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError', 'Gather stage failed', 'Fetch stage failed'])
 message_body = ""
-harvester_check_log = open("/var/log/harvester_check.log", "a")
 hostname = socket.gethostname()
 all_logs = list()
 
@@ -70,6 +69,6 @@ if message_body:
     msg = MIMEText(message_body)
     msg['Subject'] = 'Harvesting log errors for: ' + str(hostname)
     _send_mail(mail_from, recipient_emails, msg)
-    harvester_check_log.write(message_body)
-
-harvester_check_log.close()
+    print message_body
+else:
+    print str(current_time) + " - There were no errors during this check"
