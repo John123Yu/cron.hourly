@@ -6,18 +6,19 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from subprocess import call
 import socket
-print(socket.gethostname())
 
 file_names = ('/var/log/gather-consumer.log', '/var/log/fetch-consumer.log')
 mail_from = 'no-reply@data.gov'
-recipient_emails = ['data.gov.support@reisystems.com']
+recipient_emails = ['data.gov.support@reisystems.com', 'root@localhost']
 harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError', 'Gather stage failed', 'Fetch stage failed'])
+message_body = ""
 harvester_check_log = open("/var/log/harvester_check.log", "a")
+hostname = socket.gethostname()
+all_logs = list()
+
 #harvester_successes = set(['objects to the fetch queue',])
 #Gather queue consumer registered
 #Fetch queue consumer registered
-message_body = ""
-all_logs = list()
 
 def _send_mail(mail_from='', recipient_emails=[''],
         msg=MIMEText(''.encode('utf-8'), 'plain', 'utf-8')):
@@ -67,7 +68,7 @@ for i,file_name in enumerate(file_names):
 
 if message_body:
     msg = MIMEText(message_body)
-    msg['Subject'] = 'Harvesting log errors'
+    msg['Subject'] = 'Harvesting log errors for: ' + str(hostname)
     _send_mail(mail_from, recipient_emails, msg)
     harvester_check_log.write(message_body)
 
