@@ -10,7 +10,7 @@ import socket
 file_names = ('/var/log/gather-consumer.log', '/var/log/fetch-consumer.log')
 mail_from = 'no-reply@data.gov'
 recipient_emails = ['data.gov.support@reisystems.com', 'root@localhost']
-harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError', 'Gather stage failed', 'Fetch stage failed'])
+harvester_errors = set(['sqlalchemy.exc.OperationalError', 'Problems were found while connecting to the SOLR server','redis.exceptions.ConnectionError'])
 message_body = ""
 hostname = socket.gethostname()
 all_logs = list()
@@ -68,6 +68,7 @@ for i,file_name in enumerate(file_names):
 if message_body:
     msg = MIMEText(message_body)
     msg['Subject'] = 'Harvesting log errors for: ' + str(hostname)
+    msg['To'] = 'data.gov.support@reisystems.com'
     _send_mail(mail_from, recipient_emails, msg)
     print message_body
 else:
